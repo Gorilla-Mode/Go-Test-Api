@@ -34,5 +34,6 @@ curl http://localhost:8080/obstacles \
 | Audit db        | Cassandra | Open source, distributed NoSQL database. Nice for append only operations                     |
 | Container       | Docker    | Containerization platform                                                                    |
 
-**Assumes that self-hosted auth is preferable.
+**Assumes that self-hosted auth is preferable. Mutally exclusive.
+
 ***Assumes a database-first approach.
