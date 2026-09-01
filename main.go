@@ -21,9 +21,20 @@ func getObstacles(c *gin.Context) {
 	c.IndentedJSON(http.StatusOK, obstacles)
 }
 
+func postObstacle(c *gin.Context) {
+	var newObstacle Obstacle
+
+	if err := c.BindJSON(&newObstacle); err != nil {
+		return
+	}
+
+	obstacles = append(obstacles, newObstacle)
+	c.IndentedJSON(http.StatusCreated, newObstacle)
+}
 func main() {
 	router := gin.Default()
 	router.GET("/obstacles", getObstacles)
+	router.POST("/obstacles", postObstacle)
 
 	err := router.Run("localhost:8080")
 	if err != nil {
