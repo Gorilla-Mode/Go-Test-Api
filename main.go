@@ -3,6 +3,7 @@ package main
 import (
 	"net/http"
 	"strconv"
+	u "unsafe"
 
 	"github.com/gin-gonic/gin"
 )
@@ -23,7 +24,7 @@ func getObstacles(c *gin.Context) {
 }
 
 func getObstacle(c *gin.Context) {
-	id, err := strconv.ParseUint(c.Param("id"), 10, 64)
+	id, err := strconv.ParseUint(c.Param("id"), 10, int(u.Sizeof(Obstacle{}.ID)))
 	if err != nil {
 		c.IndentedJSON(http.StatusBadRequest, gin.H{"error": "invalid obstacle ID"})
 		return
@@ -40,7 +41,7 @@ func getObstacle(c *gin.Context) {
 }
 
 func deleteObstacle(c *gin.Context) {
-	id, err := strconv.ParseUint(c.Param("id"), 10, 64)
+	id, err := strconv.ParseUint(c.Param("id"), 10, int(u.Sizeof(Obstacle{}.ID)))
 	if err != nil {
 		c.IndentedJSON(http.StatusBadRequest, gin.H{"error": "invalid obstacle ID"})
 		return
