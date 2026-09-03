@@ -2,6 +2,7 @@ package main
 
 import (
 	"net/http"
+	"strconv"
 
 	"github.com/gin-gonic/gin"
 )
@@ -21,6 +22,41 @@ func getObstacles(c *gin.Context) {
 	c.IndentedJSON(http.StatusOK, obstacles)
 }
 
+func getObstacle(c *gin.Context) {
+	id, err := strconv.ParseUint(c.Param("id"), 10, 64)
+	if err != nil {
+		c.IndentedJSON(http.StatusBadRequest, gin.H{"error": "invalid obstacle ID"})
+		return
+	}
+
+	for _, obstacle := range obstacles {
+		if obstacle.ID == id {
+			c.IndentedJSON(http.StatusOK, obstacle)
+			return
+		}
+	}
+
+	c.IndentedJSON(http.StatusNotFound, gin.H{"error": "obstacle not found"})
+}
+
+func deleteObstacle(c *gin.Context) {
+	id, err := strconv.ParseUint(c.Param("id"), 10, 64)
+	if err != nil {
+		c.IndentedJSON(http.StatusBadRequest, gin.H{"error": "invalid obstacle ID"})
+		return
+	}
+
+	for i, obstacle := range obstacles {
+		if obstacle.ID == id {
+			obstacles = append(obstacles[:i], obstacles[i+1:]...)
+			c.Status(http.StatusNoContent)
+			return
+		}
+	}
+
+	c.IndentedJSON(http.StatusNotFound, gin.H{"error": "obstacle not found"})
+}
+
 func postObstacle(c *gin.Context) {
 	var newObstacle Obstacle
 
@@ -34,7 +70,9 @@ func postObstacle(c *gin.Context) {
 func main() {
 	router := gin.Default()
 	router.GET("/obstacles", getObstacles)
+	router.GET("/obstacles/:id", getObstacle)
 	router.POST("/obstacles", postObstacle)
+	router.DELETE("/obstacles/:id", deleteObstacle)
 
 	err := router.Run("localhost:8080")
 	if err != nil {
