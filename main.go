@@ -68,13 +68,18 @@ func postObstacle(c *gin.Context) {
 	obstacles = append(obstacles, newObstacle)
 	c.IndentedJSON(http.StatusCreated, newObstacle)
 }
-func main() {
+
+func setupRouter() *gin.Engine {
 	router := gin.Default()
 	router.GET("/obstacles", getObstacles)
 	router.GET("/obstacles/:id", getObstacle)
 	router.POST("/obstacles", postObstacle)
 	router.DELETE("/obstacles/:id", deleteObstacle)
+	return router
+}
 
+func main() {
+	router := setupRouter()
 	err := router.Run("localhost:8080")
 	if err != nil {
 		panic(err)
